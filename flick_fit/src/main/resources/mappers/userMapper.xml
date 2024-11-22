@@ -14,11 +14,31 @@
 		FROM users 
 	</select>
 	
+	<select id="getUserById" parameterType="String" resultType="com.example.demo.model.dto.User">
+	    SELECT *
+	    FROM users
+	    WHERE user_id = #{id}
+	</select>
+	
+	
 <insert id="insertUser" parameterType="User">
     INSERT INTO users 
     (user_id, user_pw, username, weight, height, age, gender, goal_calories)
     VALUES 
     (#{userId}, #{password}, #{username}, #{weight}, #{height}, #{age}, #{gender}, #{goalCalories});
 </insert>
+
+<update id="updateUser" parameterType="User">
+    UPDATE users
+    SET 
+	    username = #{username}, 
+	    weight = #{weight}, 
+	    height = #{height}, 
+	    age = #{age}, 
+	    gender = #{gender}, 
+	    goal_calories = #{goalCalories}
+    WHERE user_id = #{userId}
+</update>
+
 
 </mapper>

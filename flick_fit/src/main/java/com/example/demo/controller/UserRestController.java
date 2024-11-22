@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +21,7 @@ import com.example.demo.model.service.UserService;
 
 @RestController
 @RequestMapping("/api-user")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5174")
 public class UserRestController {
 
 	private final UserService userService;
@@ -39,6 +41,17 @@ public class UserRestController {
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		return new ResponseEntity<List<User>>(list, HttpStatus.OK);
 	}
+	
+	@GetMapping("/users/{id}")
+	public ResponseEntity<?> getUser(@PathVariable String id) {
+	    User user = userService.getUserById(id);
+	    if (user == null) {
+	        return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+	    }
+	    return new ResponseEntity<User>(user, HttpStatus.OK);
+	}
+
+	
 
 	// 사용자 회원가입
 	@PostMapping("/signup")
@@ -62,9 +75,24 @@ public class UserRestController {
 	        status = HttpStatus.ACCEPTED;
 	    } else {
 	        result.put("message", "login 실패");
-	        status = HttpStatus.BAD_REQUEST;
+	        status = HttpStatus.UNAUTHORIZED;
+
 	    }
 
 	    return new ResponseEntity<>(result, status);
 	}
+	
+	// 사용자 정보 변경
+	@PutMapping("/{id}")
+	public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody User user) {
+	    if (user.getUsername() == null || user.getUsername().isEmpty()) {
+	        return new ResponseEntity<>("Username cannot be null or empty", HttpStatus.BAD_REQUEST);
+	    }
+	    user.setUserId(id);
+	    if (userService.updateUser(user)) {
+	        return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
+	    }
+	    return new ResponseEntity<>("Failed to update user", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }
