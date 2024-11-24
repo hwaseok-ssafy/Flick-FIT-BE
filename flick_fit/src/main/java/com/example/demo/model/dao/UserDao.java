@@ -15,4 +15,9 @@ public interface UserDao {
 	
 	//유저 조회
 	public User selectOne(Map<String, String> info);
+	
+	//유저 업데이트
+	public int updateUser(User user);
+
+	public User getUserById(String id);
 }

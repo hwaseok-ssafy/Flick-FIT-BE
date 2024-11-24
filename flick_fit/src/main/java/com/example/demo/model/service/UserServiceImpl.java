@@ -37,5 +37,17 @@ public class UserServiceImpl implements UserService {
 	    User tmp = userDao.selectOne(info);
 	    return tmp;
 	}
+	
+	@Override
+	public User getUserById(String id) {
+		return userDao.getUserById(id);
+	}
+	
+	@Override
+    public boolean updateUser(User user) {
+        return userDao.updateUser(user) > 0;
+    }
+
+	
 
 }

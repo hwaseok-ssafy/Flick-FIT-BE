@@ -11,4 +11,9 @@ public interface UserService {
 	public boolean signup(User user);
 	//로그인 하기
 	public User login(String id, String password);
+	
+	// 사용자 정보 수정 메소드 정의
+    public boolean updateUser(User user);
+    
+	public User getUserById(String id);
 }
