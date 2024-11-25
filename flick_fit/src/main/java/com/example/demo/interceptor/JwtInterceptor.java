@@ -11,28 +11,36 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
-	private final String HEADER_AUTH = "access-token";
+    private final String HEADER_AUTH = "Authorization";
 
-	@Autowired
-	private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-		// 클라이언트는 서버에게 요청을 보내려고 했을 때 사전 요청을 먼저 보낸다.
-		// 서버가 현재 요청을 수락할 수 있는 상태인지를 쳌
-		if (request.getMethod().equals("OPTIONS"))
-			return true;
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
 
-		String token = request.getHeader(HEADER_AUTH);
-		if (token != null) {
-			jwtUtil.vaildate(token);
-			return true;
-		}
+        String header = request.getHeader(HEADER_AUTH);
+        System.out.println("Authorization Header: " + header);
 
-		throw new Exception("유효하지 않은 접근입니다.");
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+            System.out.println("Extracted Token: " + token);
+            try {
+                jwtUtil.vaildate(token);
+                System.out.println("Token validation successful");
+                return true;
+            } catch (Exception e) {
+                System.out.println("Token validation failed: " + e.getMessage());
+                throw new Exception("토큰 검증 실패: " + e.getMessage());
+            }
+        }
 
-	}
-
+        System.out.println("Missing or malformed token");
+        throw new Exception("유효하지 않은 접근입니다. 토큰이 제공되지 않았거나 형식이 잘못되었습니다.");
+    }
 }

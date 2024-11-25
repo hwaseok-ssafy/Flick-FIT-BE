@@ -3,22 +3,40 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.model.dao.UserDao">
-	<select id="selectOne" parameterType="Map" resultType="User">
-		SELECT user_id, username 
-		FROM users
-		WHERE user_id = #{userId} AND user_pw = #{password}
-	</select>
+    <select id="selectOne" parameterType="Map" resultType="com.example.demo.model.dto.User">
+        SELECT 
+            user_id AS userId, 
+            username, 
+            weight, 
+            height, 
+            age, 
+            gender, 
+            goal_calories AS goalCalories
+        FROM 
+            users
+        WHERE 
+            user_id = #{userId} AND user_pw = #{password}
+    </select>
 	
 	<select id="selectAll" resultType="User">
 		SELECT *
 		FROM users 
 	</select>
 	
-	<select id="getUserById" parameterType="String" resultType="com.example.demo.model.dto.User">
-	    SELECT *
-	    FROM users
-	    WHERE user_id = #{id}
-	</select>
+    <select id="getUserById" parameterType="String" resultType="com.example.demo.model.dto.User">
+        SELECT 
+            user_id AS userId, 
+            username, 
+            weight, 
+            height, 
+            age, 
+            gender, 
+            goal_calories AS goalCalories
+        FROM 
+            users
+        WHERE 
+            user_id = #{id}
+    </select>
 	
 	
 <insert id="insertUser" parameterType="User">
@@ -39,6 +57,15 @@
 	    goal_calories = #{goalCalories}
     WHERE user_id = #{userId}
 </update>
+
+    <!-- 코인 업데이트 -->
+    <update id="updateUserCoins">
+        UPDATE users
+        SET coin = coin + #{coins}
+        WHERE user_id = #{userId}
+    </update>
+
+
 
 
 </mapper>

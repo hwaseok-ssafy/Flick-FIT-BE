@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.model.dao.DailyStatsDao">
+
+    <!-- 특정 사용자 ID로 DailyStats 조회 -->
+<select id="getDailyStats" parameterType="map" resultType="com.example.demo.model.dto.DailyStats">
+    SELECT 
+        user_id AS userId,
+        SUM(calories_burned) AS dailyCaloriesBurned,
+        COUNT(*) AS dailySessionsCount,
+        CASE 
+            WHEN SUM(calories_burned) >= #{gameDate} THEN TRUE
+            ELSE FALSE
+        END AS dailyGoalAchieved
+    FROM GameSession
+    WHERE user_id = #{userId} 
+      AND DATE(start_time) = #{gameDate}
+    GROUP BY user_id
+</select>
+
+    <!-- updateDailyStats 메서드 추가 -->
+    <update id="updateDailyStats" parameterType="com.example.demo.model.dto.DailyStats">
+        UPDATE DailyStats
+        SET 
+            calories_burned = #{caloriesBurned},
+            sessions_count = #{sessionsCount},
+            achieved_goal = #{achievedGoal}
+        WHERE 
+            user_id = #{userId}
+            AND date = #{date}
+    </update>
+
+</mapper>
+
+

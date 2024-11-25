@@ -20,4 +20,6 @@ public interface UserDao {
 	public int updateUser(User user);
 
 	public User getUserById(String id);
+	
+    int updateUserCoins(String userId, int coins);
 }
