@@ -21,7 +21,7 @@ import com.example.demo.model.service.UserService;
 
 @RestController
 @RequestMapping("/api-user")
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserRestController {
 
 	private final UserService userService;
@@ -70,17 +70,28 @@ public class UserRestController {
 	    User loginUser = userService.login(user.getUserId(), user.getPassword());
 
 	    if (loginUser != null) {
+	        // 사용자 정보에서 민감한 데이터를 제거한 후 응답
+	        User responseUser = new User();
+	        responseUser.setUserId(loginUser.getUserId());
+	        responseUser.setUsername(loginUser.getUsername());
+	        responseUser.setHeight(loginUser.getHeight());
+	        responseUser.setWeight(loginUser.getWeight());
+	        responseUser.setAge(loginUser.getAge());
+	        responseUser.setGender(loginUser.getGender());
+	        responseUser.setGoalCalories(loginUser.getGoalCalories());
+
 	        result.put("message", "login 성공");
-	        result.put("access-token", jwtUtil.createToken(loginUser.getUsername()));
-	        status = HttpStatus.ACCEPTED;
+	        result.put("access-token", jwtUtil.createToken(loginUser.getUsername())); // JWT 토큰 생성
+	        result.put("user", responseUser); // 민감 정보를 제외한 사용자 정보
+	        status = HttpStatus.OK;
 	    } else {
 	        result.put("message", "login 실패");
 	        status = HttpStatus.UNAUTHORIZED;
-
 	    }
 
 	    return new ResponseEntity<>(result, status);
 	}
+
 	
 	// 사용자 정보 변경
 	@PutMapping("/{id}")
